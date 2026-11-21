@@ -5,10 +5,10 @@
   lab manuals                            run and score your Part 1 and 2 pipeline on dev
   lab manuals --pipeline baseline        the same for the baseline
   lab explain manuals A01                what a pipeline retrieves and answers for one question
-  lab copilot --ids D03 D16              run and score your Part 3 and 4 pipeline on some dev questions
+  lab support --ids D03 D16              run and score your Part 3 and 4 pipeline on some dev questions
   lab compare                            whole corpus in one prompt against RAG, on five questions
-  lab explain copilot D20                what the copilot retrieves, with each chunk's source details
-  lab rescore runs/mine_copilot_dev.jsonl    score a saved run again, with no model calls
+  lab explain support D20                what the support assistant retrieves, with each chunk's source details
+  lab rescore runs/mine_support_dev.jsonl    score a saved run again, with no model calls
   lab submit manuals                     run the test questions once and write your submission
 """
 import argparse
@@ -16,12 +16,12 @@ import importlib
 import json
 import sys
 
-from labkit import config, copilot, llm, manuals, score
+from labkit import config, support, llm, manuals, score
 
 PIPELINES = {
     "manuals": {"baseline": "labkit.manuals:ManualsBaseline", "mine": "mylab.manuals:MyManuals"},
-    "copilot": {"baseline": "labkit.copilot:CopilotBaseline", "mine": "mylab.copilot:MyCopilot",
-                "whole": "labkit.copilot:WholeCorpusPipeline"},
+    "support": {"baseline": "labkit.support:SupportBaseline", "mine": "mylab.support:MySupport",
+                "whole": "labkit.support:WholeCorpusPipeline"},
 }
 FIVE = ["D03", "D09", "D16", "D21", "D23"]
 
@@ -78,13 +78,13 @@ def cmd_show(args):
 
 
 def cmd_part(args):
-    """lab manuals / lab copilot: run a pipeline on dev, save the run, and score it."""
+    """lab manuals / lab support: run a pipeline on dev, save the run, and score it."""
     part, before = args.part, llm.USAGE["calls"]
     pipe = load_pipeline(part, args.pipeline)
     if part == "manuals":
         rows = manuals.run(pipe, "dev", ids=args.ids, quiet=not args.answers)
     else:
-        rows = copilot.run(pipe, "dev", ids=args.ids, retrieval_only=args.retrieval_only,
+        rows = support.run(pipe, "dev", ids=args.ids, retrieval_only=args.retrieval_only,
                            quiet=not args.answers)
     retrieval_only = getattr(args, "retrieval_only", False)
     name = args.pipeline.replace(":", ".") + ("-retrieval" if retrieval_only else "")
@@ -101,7 +101,7 @@ def cmd_part(args):
                 print(f"(Not compared: the saved baseline has no result for {' '.join(missing)}. "
                       f"Run `lab {part} --pipeline baseline --ids {' '.join(missing)}` first.)")
                 compare = None
-    scorer = score.manuals if part == "manuals" else score.copilot
+    scorer = score.manuals if part == "manuals" else score.support
     scorer(rows, compare=compare, verbose=not args.brief, label=pipe.name)
     if retrieval_only:
         print("Retrieval only: no answers were generated, so answer scores are 0 and the gate fails by design.\n"
@@ -116,19 +116,19 @@ def cmd_explain(args):
     if args.part == "manuals":
         manuals.explain(pipe, question)
     else:
-        copilot.explain(pipe, question, tenant=args.tenant)
+        support.explain(pipe, question, tenant=args.tenant)
 
 
 def cmd_compare(args):
     """Whole corpus in one prompt against RAG, on the same questions."""
     before, ids = llm.USAGE["calls"], args.ids or FIVE
-    whole = copilot.run(load_pipeline("copilot", "whole"), "dev", ids=ids, quiet=True)
-    save_run(whole, "copilot", "whole", "dev")
-    score.copilot(whole, label="whole corpus in one prompt")
-    rag = saved_run("copilot", args.against)
+    whole = support.run(load_pipeline("support", "whole"), "dev", ids=ids, quiet=True)
+    save_run(whole, "support", "whole", "dev")
+    score.support(whole, label="whole corpus in one prompt")
+    rag = saved_run("support", args.against)
     if rag is None or not {r["id"] for r in rag} >= set(ids):
-        rag = copilot.run(load_pipeline("copilot", args.against), "dev", ids=ids, quiet=True)
-    score.copilot([r for r in rag if r["id"] in ids], label=f"RAG ({args.against})")
+        rag = support.run(load_pipeline("support", args.against), "dev", ids=ids, quiet=True)
+    score.support([r for r in rag if r["id"] in ids], label=f"RAG ({args.against})")
     calls_note(before)
 
 
@@ -137,9 +137,9 @@ def cmd_rescore(args):
         if f and not __import__("os").path.exists(f):
             raise SystemExit(f"No saved run at {f}. Saved runs are in runs/.")
     rows = score.load(args.run)
-    part = "manuals" if rows and "answer_type" in rows[0] else "copilot"
+    part = "manuals" if rows and "answer_type" in rows[0] else "support"
     compare = score.load(args.compare) if args.compare else None
-    (score.manuals if part == "manuals" else score.copilot)(rows, compare=compare, verbose=True,
+    (score.manuals if part == "manuals" else score.support)(rows, compare=compare, verbose=True,
                                                            label=args.run)
 
 
@@ -152,7 +152,7 @@ def cmd_submit(args):
         raise SystemExit(f"{out.name} already exists. Each test split is run once; use --force to replace it.")
     before = llm.USAGE["calls"]
     pipe = load_pipeline(args.part, args.pipeline)
-    (manuals.run if args.part == "manuals" else copilot.run)(pipe, "test", participant=participant, quiet=True)
+    (manuals.run if args.part == "manuals" else support.run)(pipe, "test", participant=participant, quiet=True)
     print(f"Hand {rel(out)} to your facilitator.")
     calls_note(before)
 
@@ -169,23 +169,23 @@ def main(argv=None):
     p.add_argument("unit_ids", nargs="+")
     p.set_defaults(func=cmd_show)
 
-    for part in ("manuals", "copilot"):
+    for part in ("manuals", "support"):
         p = sub.add_parser(part, help=f"run and score a {part} pipeline on the dev questions")
         p.add_argument("--pipeline", default="mine", help="mine (default), baseline, or module:Class")
         p.add_argument("--ids", nargs="*", help="only these question IDs")
         p.add_argument("--answers", action="store_true", help="print each answer as it runs")
         p.add_argument("--brief", action="store_true", help="scorecard only, no per-question lines")
         p.add_argument("--no-compare", action="store_true", help="do not compare with the saved baseline")
-        if part == "copilot":
+        if part == "support":
             p.add_argument("--retrieval-only", action="store_true",
                            help="retrieve without answering: no model calls, retrieval metrics only")
         p.set_defaults(func=cmd_part, part=part)
 
     p = sub.add_parser("explain", help="what a pipeline retrieves and answers for one question")
-    p.add_argument("part", choices=["manuals", "copilot"])
+    p.add_argument("part", choices=["manuals", "support"])
     p.add_argument("question", nargs="+", help="a question ID such as A01, or any question text")
     p.add_argument("--pipeline", default="mine")
-    p.add_argument("--tenant", help="copilot only: merchant ID for free-text questions, e.g. M-GFB")
+    p.add_argument("--tenant", help="support only: merchant ID for free-text questions, e.g. M-GFB")
     p.set_defaults(func=cmd_explain)
 
     p = sub.add_parser("compare", help="whole corpus in one prompt against RAG")
@@ -199,7 +199,7 @@ def main(argv=None):
     p.set_defaults(func=cmd_rescore)
 
     p = sub.add_parser("submit", help="run the test questions once and write your submission")
-    p.add_argument("part", choices=["manuals", "copilot"])
+    p.add_argument("part", choices=["manuals", "support"])
     p.add_argument("--pipeline", default="mine")
     p.add_argument("--participant")
     p.add_argument("--force", action="store_true")

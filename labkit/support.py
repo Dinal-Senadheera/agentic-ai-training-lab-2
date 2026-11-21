@@ -1,4 +1,4 @@
-"""Parts 3 and 4: the Aralia support copilot.
+"""Parts 3 and 4: the Aralia support assistant.
 
 The baseline already does a first RAG build well: chunking, dense embeddings fused with BM25
 (reciprocal rank fusion) and a grounded prompt. Images and the plans table arrive as enriched text.
@@ -15,7 +15,7 @@ from rank_bm25 import BM25Okapi
 from labkit import config, embed, llm
 
 SYSTEM = (
-    "You are a support copilot for Aralia Systems. Answer the support agent's question using only "
+    "You are a support assistant for Aralia Systems. Answer the support agent's question using only "
     "the context passages, and cite the chunk IDs you used. If the context does not contain the "
     "answer, set abstained to true. Reply with JSON only, in this form:\n"
     '{"answer": "<short answer>", "citations": ["<chunk_id>", ...], "abstained": false}'
@@ -35,13 +35,13 @@ def tokens(text):
 
 
 def load_questions(split):
-    with open(config.COPILOT / f"{split}_questions.jsonl", encoding="utf-8") as f:
+    with open(config.SUPPORT / f"{split}_questions.jsonl", encoding="utf-8") as f:
         return [json.loads(l) for l in f if l.strip()]
 
 
 def load_documents():
     """(doc_id, text, metadata) for every document, using enriched text for images and the PDF table."""
-    corpus = config.COPILOT / "corpus"
+    corpus = config.SUPPORT / "corpus"
     docs = []
     for e in json.loads((corpus / "manifest.json").read_text(encoding="utf-8")):
         enriched = (corpus / e["enriched"]).read_text(encoding="utf-8") if e.get("enriched") else ""
@@ -59,7 +59,7 @@ def load_documents():
     return docs
 
 
-class CopilotBaseline:
+class SupportBaseline:
     name = "baseline"
     chunk_size, overlap, top_k = 800, 100, 5
 
@@ -106,7 +106,7 @@ class CopilotBaseline:
         return {"id": question["id"]} | out
 
 
-class WholeCorpusPipeline(CopilotBaseline):
+class WholeCorpusPipeline(SupportBaseline):
     """No retrieval: every document goes into one long prompt, cached between questions where the
     provider supports it. Compare its score, tokens and latency with RAG."""
     name = "whole-corpus"
@@ -145,7 +145,7 @@ def run(pipe, split="dev", participant=None, ids=None, retrieval_only=False, qui
             print(f"{q['id']}: {'(abstained) ' if row['abstained'] else ''}{row['answer'][:90]!r}")
     if participant:
         config.SUBMISSIONS.mkdir(exist_ok=True)
-        path = config.SUBMISSIONS / f"{participant}_copilot_{split}.jsonl"
+        path = config.SUBMISSIONS / f"{participant}_support_{split}.jsonl"
         path.write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows), encoding="utf-8")
         print(f"Saved {path.name}")
     return rows

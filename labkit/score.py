@@ -1,8 +1,8 @@
 """Scorecards for both parts of the lab.
 
-Used by the `lab` command (lab manuals, lab copilot, lab rescore):
+Used by the `lab` command (lab manuals, lab support, lab rescore):
   score.manuals(rows)                    Part 1 and 2: by answer type, unit and page level
-  score.copilot(rows)                    Parts 3 and 4: by category, with Part 3 and Part 4 subtotals
+  score.support(rows)                    Parts 3 and 4: by category, with Part 3 and Part 4 subtotals
   pass compare=baseline_rows to see before and after; verbose=True for a reason per question
 
 Part 1 and 2 rules: 1.0 when the answer type matches, the unit is the gold unit and the citation
@@ -305,8 +305,8 @@ def manuals(rows, gold=None, compare=None, verbose=False, label="your pipeline")
             print(f"{r['id']:<5}{r['type']:<8}{r['score']:.0f}  {r['why']}")
 
 
-def copilot(rows, gold=None, compare=None, verbose=False, label="your pipeline"):
-    gold_rows = load(gold or config.COPILOT / "dev_questions.jsonl")
+def support(rows, gold=None, compare=None, verbose=False, label="your pipeline"):
+    gold_rows = load(gold or config.SUPPORT / "dev_questions.jsonl")
     if "key_facts" not in gold_rows[0]:
         raise SystemExit("The test file has no answers. Facilitators score the test set.")
     sub = _rows(rows)

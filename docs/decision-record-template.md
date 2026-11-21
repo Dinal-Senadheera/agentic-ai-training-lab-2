@@ -1,7 +1,7 @@
 # Decision record: <PARTICIPANT>
 
-Your Part 4 hand-in. Copy this file, fill in each section, and submit it with your copilot test
-file. Write it for an engineering lead who must decide whether to ship your copilot.
+Your Part 4 hand-in. Copy this file, fill in each section, and submit it with your support test
+file. Write it for an engineering lead who must decide whether to ship your support assistant.
 
 ## Hypotheses
 

@@ -1,18 +1,18 @@
-# Parts 3 and 4 (take-home): the Aralia support copilot
+# Parts 3 and 4 (take-home): the Aralia support assistant
 
 Aralia's L1 support team answers merchants' questions from a knowledge base of manuals for two
 product versions (Classic 3.x and Cloud 4.x), policies, release notes, two merchants' contract
-addenda, past tickets, a plans PDF and images. A pilot copilot lost the agents' trust: it quoted
+addenda, past tickets, a plans PDF and images. A pilot assistant lost the agents' trust: it quoted
 Classic limits to Cloud merchants, gave outdated refund rules, and told a restaurant about another
 merchant's contract.
 
 The baseline already does what you built in the primitives lab and more: it fuses BM25 with dense
 search, uses a grounded prompt with an abstain option, and receives the images and the plans table
 as enriched text. It still fails, because it does not reason about the sources it finds. Read
-`CopilotBaseline` in `labkit/copilot.py`, then save a baseline run:
+`SupportBaseline` in `labkit/support.py`, then save a baseline run:
 
 ```
-lab copilot --pipeline baseline
+lab support --pipeline baseline
 ```
 
 Each full dev run makes 24 model calls, and the test run 26. While developing, run a few questions
@@ -71,22 +71,22 @@ question can retrieve another merchant's contract, and you can say which placeme
 
 ## Build
 
-Edit `MyCopilot` in `mylab/copilot.py`, then:
+Edit `MySupport` in `mylab/support.py`, then:
 
 ```
-lab copilot --ids D03 D16 D20             a few questions, scored against the saved baseline
-lab explain copilot D20                   what it retrieves, with each chunk's source details
-lab explain copilot "refund window" --tenant M-GFB
-lab rescore runs/mine_copilot_dev.jsonl
+lab support --ids D03 D16 D20             a few questions, scored against the saved baseline
+lab explain support D20                   what it retrieves, with each chunk's source details
+lab explain support "refund window" --tenant M-GFB
+lab rescore runs/mine_support_dev.jsonl
 ```
 
 ## Submit Parts 3 and 4
 
-Run the test questions once, then hand in `submissions/<PARTICIPANT>_copilot_test.jsonl` with your
+Run the test questions once, then hand in `submissions/<PARTICIPANT>_support_test.jsonl` with your
 `mylab/` folder and your decision record:
 
 ```
-lab submit copilot
+lab submit support
 ```
 
 ## Decision record

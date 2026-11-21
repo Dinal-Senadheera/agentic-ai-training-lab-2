@@ -1,4 +1,4 @@
-"""Optional for Part 4: the copilot's chunks in a Chroma vector database, searchable with metadata filters.
+"""Optional for Part 4: the support knowledge base's chunks in a Chroma vector database, searchable with metadata filters.
 
 The baseline keeps its vectors in a numpy array and searches all of them. A vector database can also
 filter on each chunk's metadata during the search. Use it to test where a filter must sit:

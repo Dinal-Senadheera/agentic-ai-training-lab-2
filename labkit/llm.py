@@ -59,7 +59,7 @@ def _require_key(name):
     if not key or "your-key" in key:
         raise SystemExit(
             f"No API key: set {name} in .env. This lab needs an Anthropic or OpenRouter API key for every "
-            "model call (figure captions and copilot answers). See 'API key' in the README.")
+            "model call (figure captions and support answers). See 'API key' in the README.")
     return key
 
 
