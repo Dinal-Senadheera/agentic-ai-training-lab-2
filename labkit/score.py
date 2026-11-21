@@ -214,17 +214,17 @@ def _c_leaderboard(folder: Path, gold_rows):
     for f in sorted(folder.glob("*_copilot_test.jsonl")):
         res, retr, cost = _c_evaluate(gold_rows, load(f))
         overall, leaks, cats, _ = _c_summary(res, retr)
-        team = f.stem.replace("_copilot_test", "")
+        participant = f.stem.replace("_copilot_test", "")
         pipeline = (load(f) or [{}])[0].get("pipeline", "")
-        rows.append((overall, team, pipeline, leaks, cats, cost))
+        rows.append((overall, participant, pipeline, leaks, cats, cost))
     rows.sort(key=lambda r: (r[3] > 0, -r[0]))
     cats_present = [c for c in CATEGORIES if any(c in r[4] for r in rows)]
-    print(f"{'team':<10}{'pipeline':<18}{'overall':>8}{'leaks':>6}{'gate':>6}  " +
+    print(f"{'participant':<12}{'pipeline':<18}{'overall':>8}{'leaks':>6}{'gate':>6}  " +
           " ".join(f"{c[:6]:>6}" for c in cats_present) + f"{'tokens':>9}")
-    for overall, team, pipeline, leaks, cats, cost in rows:
+    for overall, participant, pipeline, leaks, cats, cost in rows:
         gate = "PASS" if overall >= SHIP_SCORE and leaks == 0 else "FAIL"
         tokens = cost.get("input_tokens", 0) + cost.get("output_tokens", 0)
-        print(f"{team:<10}{pipeline[:17]:<18}{overall:>8.2f}{leaks:>6}{gate:>6}  " +
+        print(f"{participant:<12}{pipeline[:17]:<18}{overall:>8.2f}{leaks:>6}{gate:>6}  " +
               " ".join(f"{cats[c][0]:>6.2f}" if c in cats else f"{'-':>6}" for c in cats_present) +
               f"{tokens:>9.0f}")
 
@@ -326,11 +326,11 @@ def _m_leaderboard(folder, gold_rows):
         rows.append((overall, f.stem.replace("_manuals_test", ""), subs[0].get("pipeline", "") if subs else "",
                      unsourced, wrong, by))
     rows.sort(key=lambda r: (r[3] > 0, -r[0]))
-    print(f"{'team':<10}{'pipeline':<18}{'overall':>8}{'unsourced':>10}{'wrong':>7}{'gate':>6}  " +
+    print(f"{'participant':<12}{'pipeline':<18}{'overall':>8}{'unsourced':>10}{'wrong':>7}{'gate':>6}  " +
           " ".join(f"{t:>7}" for t in TYPES))
-    for overall, team, pipe, uns, wrong, by in rows:
+    for overall, participant, pipe, uns, wrong, by in rows:
         gate = "PASS" if overall >= SHIP_SCORE and uns == 0 else "FAIL"
-        print(f"{team:<10}{pipe[:17]:<18}{overall:>8.2f}{uns:>10}{wrong:>7}{gate:>6}  " +
+        print(f"{participant:<12}{pipe[:17]:<18}{overall:>8.2f}{uns:>10}{wrong:>7}{gate:>6}  " +
               " ".join(f"{sum(by[t]) / len(by[t]):>7.2f}" if t in by else f"{'-':>7}" for t in TYPES))
 
 

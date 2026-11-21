@@ -1,4 +1,4 @@
-# Decision record: <TEAM>
+# Decision record: <PARTICIPANT>
 
 Write this for an engineering lead who must decide whether to ship.
 

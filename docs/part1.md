@@ -65,7 +65,7 @@ Before you submit, check that:
 - [ ] The system abstains when nothing sourced answers.
 - [ ] You can explain the unit and page gap from Step 1.
 
-Run the test questions once, then hand `submissions/<TEAM>_manuals_test.jsonl` to your facilitator:
+Run the test questions once, then hand `submissions/<PARTICIPANT>_manuals_test.jsonl` to your facilitator:
 
 ```
 lab submit manuals

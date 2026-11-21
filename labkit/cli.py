@@ -125,15 +125,15 @@ def cmd_rescore(args):
 
 
 def cmd_submit(args):
-    team = args.team or config.TEAM
-    if not team.isalnum():
-        raise SystemExit("Set TEAM in .env (or pass --team) to your pair's name: letters and digits only.")
-    out = config.SUBMISSIONS / f"{team}_{args.part}_test.jsonl"
+    participant = args.participant or config.PARTICIPANT
+    if not participant.isalnum():
+        raise SystemExit("Set PARTICIPANT in .env (or pass --participant) to your ID: letters and digits only.")
+    out = config.SUBMISSIONS / f"{participant}_{args.part}_test.jsonl"
     if out.exists() and not args.force:
         raise SystemExit(f"{out.name} already exists. Each test split is run once; use --force to replace it.")
     before = llm.USAGE["calls"]
     pipe = load_pipeline(args.part, args.pipeline)
-    (manuals.run if args.part == "manuals" else copilot.run)(pipe, "test", team=team, quiet=True)
+    (manuals.run if args.part == "manuals" else copilot.run)(pipe, "test", participant=participant, quiet=True)
     print(f"Hand {rel(out)} to your facilitator.")
     calls_note(before)
 
@@ -182,7 +182,7 @@ def main(argv=None):
     p = sub.add_parser("submit", help="run the test questions once and write your submission")
     p.add_argument("part", choices=["manuals", "copilot"])
     p.add_argument("--pipeline", default="mine")
-    p.add_argument("--team")
+    p.add_argument("--participant")
     p.add_argument("--force", action="store_true")
     p.set_defaults(func=cmd_submit)
 

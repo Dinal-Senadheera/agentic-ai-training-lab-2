@@ -29,8 +29,8 @@ SUBMISSIONS = ROOT / "submissions"
 RUNS = ROOT / "runs"
 CACHE = ROOT / ".cache"
 
-# Your pair's name, used in submission file names: letters and digits only.
-TEAM = setting("TEAM", "T00")
+# Your ID, used in submission file names: letters and digits only.
+PARTICIPANT = setting("PARTICIPANT", "P00")
 
 # Language model: LLM_PROVIDER=anthropic (ANTHROPIC_API_KEY) or openrouter (OPENROUTER_API_KEY)
 LLM_PROVIDER = setting("LLM_PROVIDER", "anthropic").lower()

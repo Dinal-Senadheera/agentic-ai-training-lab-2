@@ -131,8 +131,8 @@ class WholeCorpusPipeline(CopilotBaseline):
         return row
 
 
-def run(pipe, split="dev", team=None, ids=None, retrieval_only=False, quiet=False):
-    """Index, answer each question, and save the submission if a team is given."""
+def run(pipe, split="dev", participant=None, ids=None, retrieval_only=False, quiet=False):
+    """Index, answer each question, and save the submission if a participant ID is given."""
     pipe.build_index()
     rows = []
     for q in load_questions(split):
@@ -143,9 +143,9 @@ def run(pipe, split="dev", team=None, ids=None, retrieval_only=False, quiet=Fals
         rows.append(row)
         if not quiet:
             print(f"{q['id']}: {'(abstained) ' if row['abstained'] else ''}{row['answer'][:90]!r}")
-    if team:
+    if participant:
         config.SUBMISSIONS.mkdir(exist_ok=True)
-        path = config.SUBMISSIONS / f"{team}_copilot_{split}.jsonl"
+        path = config.SUBMISSIONS / f"{participant}_copilot_{split}.jsonl"
         path.write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows), encoding="utf-8")
         print(f"Saved {path.name}")
     return rows

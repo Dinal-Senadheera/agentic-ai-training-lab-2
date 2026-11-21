@@ -67,8 +67,8 @@ class ManualsBaseline:
         return {"id": question["id"]} | out
 
 
-def run(pipe, split="dev", team=None, ids=None, quiet=False):
-    """Index, answer every question in the split, and save the submission if a team is given."""
+def run(pipe, split="dev", participant=None, ids=None, quiet=False):
+    """Index, answer every question in the split, and save the submission if a participant ID is given."""
     before = dict(llm.USAGE)
     pipe.build_index()
     qs = [q for q in load_questions(split) if not ids or q["id"] in ids]
@@ -83,9 +83,9 @@ def run(pipe, split="dev", team=None, ids=None, quiet=False):
     calls = llm.USAGE["calls"] - before["calls"]
     cached = llm.USAGE["captions_from_cache"] - before["captions_from_cache"]
     print(f"{len(pipe.units)} units indexed. Model calls this run: {calls}; captions served from cache: {cached}.")
-    if team:
+    if participant:
         config.SUBMISSIONS.mkdir(exist_ok=True)
-        path = config.SUBMISSIONS / f"{team}_manuals_{split}.jsonl"
+        path = config.SUBMISSIONS / f"{participant}_manuals_{split}.jsonl"
         path.write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows), encoding="utf-8")
         print(f"Saved {path.name}")
     return rows

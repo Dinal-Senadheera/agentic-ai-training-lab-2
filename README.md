@@ -28,7 +28,7 @@ pip install -r requirements.txt
 copy .env.example .env            (Windows)   or   cp .env.example .env
 ```
 
-Open `.env` and set `TEAM` to your pair's name, `LLM_PROVIDER` (`anthropic` or `openrouter`) and the
+Open `.env` and set `PARTICIPANT` to your ID (letters and digits only), `LLM_PROVIDER` (`anthropic` or `openrouter`) and the
 matching key. Then run:
 
 ```

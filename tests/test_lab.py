@@ -67,9 +67,9 @@ def test_rescore(capsys):
 
 
 def test_submit_once(monkeypatch):
-    monkeypatch.setattr(config, "TEAM", "T99")
+    monkeypatch.setattr(config, "PARTICIPANT", "P99")
     lab("submit", "manuals")
-    assert (config.SUBMISSIONS / "T99_manuals_test.jsonl").exists()
+    assert (config.SUBMISSIONS / "P99_manuals_test.jsonl").exists()
     with pytest.raises(SystemExit):
         lab("submit", "manuals")
     lab("submit", "manuals", "--force")

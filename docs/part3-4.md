@@ -71,7 +71,7 @@ lab rescore runs/mine_copilot_dev.jsonl
 
 ## Submit Parts 3 and 4
 
-Run the test questions once, then hand in `submissions/<TEAM>_copilot_test.jsonl` with your
+Run the test questions once, then hand in `submissions/<PARTICIPANT>_copilot_test.jsonl` with your
 `mylab/` folder and your decision record:
 
 ```
