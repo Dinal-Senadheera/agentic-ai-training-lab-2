@@ -3,9 +3,9 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "rag-lab"
+name = "agentic-ai-training-lab-2"
 version = "1.0.0"
-description = "RAG lab: rich answers you can trust"
+description = "Agentic AI Training Lab 2: retrieval-augmented generation"
 requires-python = ">=3.10"
 dependencies = [
     "anthropic>=0.40",

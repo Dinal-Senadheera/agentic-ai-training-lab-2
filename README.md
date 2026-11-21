@@ -1,6 +1,6 @@
-# RAG Lab: Rich Answers You Can Trust
+# Agentic AI Training Lab 2: Retrieval-Augmented Generation
 
-Course 3, Agentic Systems and Retrieval
+Rich answers you can trust. Course 3, Agentic Systems and Retrieval.
 
 You have built retrieval from primitives. This lab puts it under the conditions a real system meets:
 manuals full of figures and tables, sources that disagree, merchants who must never see each other's
@@ -20,8 +20,8 @@ questions that facilitators score. Each scorecard ends with a ship gate.
 ## Setup
 
 ```
-git clone https://github.com/Dinal-Senadheera/rag-lab.git
-cd rag-lab
+git clone https://github.com/Dinal-Senadheera/agentic-ai-training-lab-2.git
+cd agentic-ai-training-lab-2
 python -m venv .venv
 .venv\Scripts\activate            (Windows)   or   source .venv/bin/activate
 pip install -r requirements.txt

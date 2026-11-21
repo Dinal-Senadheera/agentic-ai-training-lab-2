@@ -1,4 +1,4 @@
-"""Settings for the RAG lab. Set values in .env, not in this file."""
+"""Settings for Agentic AI Training Lab 2. Set values in .env, not in this file."""
 import os
 from pathlib import Path
 

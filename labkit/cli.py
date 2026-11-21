@@ -1,4 +1,4 @@
-"""Command line for the RAG lab. Run `lab --help` (or `python -m labkit --help`).
+"""Command line for Agentic AI Training Lab 2. Run `lab --help` (or `python -m labkit --help`).
 
   lab check                              key, limits, model, one text and one image call
   lab show fsm-fig3 fsm-tab3b            print units: provenance, text, table or image path
@@ -140,7 +140,7 @@ def cmd_submit(args):
 
 # ------------------------------------------------------------------------------ parser
 def main(argv=None):
-    ap = argparse.ArgumentParser(prog="lab", description="RAG lab commands.",
+    ap = argparse.ArgumentParser(prog="lab", description="Agentic AI Training Lab 2 commands.",
                                  formatter_class=argparse.RawDescriptionHelpFormatter, epilog=__doc__)
     sub = ap.add_subparsers(dest="command", required=True)
 
