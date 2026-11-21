@@ -87,7 +87,10 @@ def _record(input_tokens, output_tokens, cached=0):
             "cached_input_tokens": cached or 0}
 
 
-def _call(system, content_anthropic, content_openai, max_tokens, cache_system, retries=3):
+RETRY_WAITS_S = (15, 30, 60)   # waits after a busy or failed provider response
+
+
+def _call(system, content_anthropic, content_openai, max_tokens, cache_system, retries=len(RETRY_WAITS_S) + 1):
     client = _get_client()
     for attempt in range(retries):
         try:
@@ -115,10 +118,27 @@ def _call(system, content_anthropic, content_openai, max_tokens, cache_system, r
             return r.choices[0].message.content or "", _record(getattr(u, "prompt_tokens", 0),
                                                                getattr(u, "completion_tokens", 0))
         except Exception as e:
-            if ("429" in str(e) or "rate" in str(e).lower()) and attempt < retries - 1:
-                print("Rate limited; waiting 20 s ...")
-                time.sleep(20)
+            msg = str(e)
+            status = getattr(e, "status_code", None)
+            if "per-day" in msg or "per day" in msg.lower():
+                raise SystemExit(
+                    "Today's free-model allowance is used up. It resets at 00:00 UTC (05:30 in Sri Lanka).\n"
+                    f"Details: {msg[:300]}") from None
+            busy = status in (429, 500, 502, 503, 504, 529) or "429" in msg or "overloaded" in msg.lower()
+            if busy and attempt < retries - 1:
+                wait = RETRY_WAITS_S[attempt]
+                print(f"The model provider is busy ({status or 'error'}); trying again in {wait} s ...")
+                time.sleep(wait)
                 continue
+            if busy:
+                if config.LLM_PROVIDER == "openrouter":
+                    raise SystemExit(
+                        f"The free provider for {config.OPENROUTER_MODEL or 'this model'} is still busy after "
+                        f"{retries} tries.\nWait a few minutes, or set OPENROUTER_MODEL in .env to another free "
+                        "model that `lab check` lists, then run the command again.\n"
+                        f"Details: {msg[:300]}") from None
+                raise SystemExit(f"The model provider is still busy after {retries} tries; wait a few minutes "
+                                 f"and run the command again.\nDetails: {msg[:300]}") from None
             raise
 
 
