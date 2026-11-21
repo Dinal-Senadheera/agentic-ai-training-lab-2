@@ -40,11 +40,18 @@ def main():
         images = "image" in (m.get("architecture") or {}).get("input_modalities", [])
         print(f"Using {chosen}: accepts images = {images}")
         if not images:
-            print("  Figure captions need an image model: set OPENROUTER_MODEL to one listed above.")
+            print("  This model cannot read images. It works for Parts 3 and 4; Part 1 figure captions\n"
+                  "  need an image model, so set OPENROUTER_MODEL to one listed above for Part 1.")
+    else:
+        images = True
     text, usage = llm.ask("Reply with one word.", "Say ready.")
     print(f"\nText call: {text.strip()!r} {usage}")
-    cap = llm.caption("artefacts/figures/fsm-fig3.png", "Name the device model shown in this image, in a few words.")
-    print(f"Image call: {cap.strip()[:120]!r}")
+    if images:
+        cap = llm.caption("artefacts/figures/fsm-fig3.png",
+                          "Name the device model shown in this image, in a few words.")
+        print(f"Image call: {cap.strip()[:120]!r}")
+    else:
+        print("Image call: skipped (text-only model)")
     print(f"\nRequests used by this check: {llm.USAGE['calls']}")
 
 
