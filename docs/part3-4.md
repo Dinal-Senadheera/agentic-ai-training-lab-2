@@ -17,8 +17,9 @@ lab copilot --pipeline baseline
 
 Each full dev run makes 24 model calls, and the test run 26. While developing, run a few questions
 with `--ids`, and check retrieval with `--retrieval-only`, which makes no model calls. On
-OpenRouter's free models the allowance is 50 requests a day per account (1,000 once the account has
-bought $10 of credits), failed requests count, and calls are paced to 20 a minute. Plan your runs.
+OpenRouter's free models the allowance is 50 requests a day (1,000 once $10 of credits have ever
+been bought), and calls are paced to stay under 20 a minute. `lab check` shows what is left today.
+Plan your runs.
 
 ## Step 1: RAG, or the whole corpus in one prompt?
 

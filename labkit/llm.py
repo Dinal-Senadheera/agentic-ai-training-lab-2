@@ -20,15 +20,32 @@ _last_call = [0.0]
 FREE_MODEL_GAP_S = 3.2      # stays under OpenRouter's 20 free-model requests a minute
 
 
+# Free models that accept images, best first. OpenRouter's free list changes; if none of these is
+# offered, the first other free image model is used. Reasoning models are skipped: they are slow
+# and spend output tokens on thinking.
+PREFERRED_FREE_MODELS = [
+    "google/gemma-4-31b-it:free",
+    "google/gemma-4-26b-a4b-it:free",
+    "nvidia/nemotron-3.5-super-vl:free",
+]
+
+
+def free_vision_models(models):
+    """IDs of free models (":free") whose input modalities include images, preferred ones first."""
+    ids = [m["id"] for m in models if m["id"].endswith(":free")
+           and "image" in (m.get("architecture") or {}).get("input_modalities", [])]
+    preferred = [i for i in PREFERRED_FREE_MODELS if i in ids]
+    others = [i for i in ids if i not in preferred and "reasoning" not in i]
+    return preferred + others
+
+
 def pick_openrouter_model():
-    """The configured OpenRouter model, or the first free model that accepts images."""
+    """The configured OpenRouter model, or the best free model that accepts images."""
     if config.OPENROUTER_MODEL:
         return config.OPENROUTER_MODEL
     import urllib.request
     req = urllib.request.Request("https://openrouter.ai/api/v1/models")
-    models = json.load(urllib.request.urlopen(req, timeout=30))["data"]
-    vision = [m["id"] for m in models if m["id"].endswith(":free")
-              and "image" in (m.get("architecture") or {}).get("input_modalities", [])]
+    vision = free_vision_models(json.load(urllib.request.urlopen(req, timeout=30))["data"])
     if not vision:
         raise RuntimeError("No free OpenRouter model accepts images today. Set OPENROUTER_MODEL in .env.")
     config.OPENROUTER_MODEL = vision[0]

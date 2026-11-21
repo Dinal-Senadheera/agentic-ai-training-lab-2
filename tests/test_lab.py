@@ -107,3 +107,14 @@ def test_submit_needs_own_id(monkeypatch):
     monkeypatch.setattr(config, "PARTICIPANT", "P00")
     with pytest.raises(SystemExit):
         lab("submit", "manuals")
+
+
+def test_free_vision_model_choice():
+    def m(i, image=True):
+        return {"id": i, "architecture": {"input_modalities": ["text", "image"] if image else ["text"]}}
+    live = [m("inclusionai/ling-3.2-flash:free"), m("baidu/ernie-5.5-flash-preview:free", image=False),
+            m("nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"), m("google/gemma-4-26b-a4b-it:free"),
+            m("google/gemma-4-31b-it:free"), m("openai/gpt-5-mini")]
+    assert llm.free_vision_models(live) == ["google/gemma-4-31b-it:free", "google/gemma-4-26b-a4b-it:free",
+                                            "inclusionai/ling-3.2-flash:free"]
+    assert llm.free_vision_models([m("someone/new-vl:free")]) == ["someone/new-vl:free"]

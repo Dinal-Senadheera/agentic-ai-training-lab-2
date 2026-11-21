@@ -14,11 +14,6 @@ def _get(url, key):
     return json.load(urllib.request.urlopen(req, timeout=30))
 
 
-def free_vision_models(models):
-    return [m["id"] for m in models
-            if m["id"].endswith(":free") and "image" in (m.get("architecture") or {}).get("input_modalities", [])]
-
-
 def main():
     print(f"Provider: {config.LLM_PROVIDER}   Model: {config.model_name() or '(auto)'}")
     if config.LLM_PROVIDER == "openrouter":
@@ -28,14 +23,15 @@ def main():
         for k in ("label", "is_free_tier", "limit", "limit_remaining", "usage", "usage_daily"):
             if k in info:
                 print(f"  {k}: {info[k]}")
-        for k, v in info.items():
-            if "free" in k.lower() and k != "is_free_tier":
-                print(f"  {k}: {v}")
-        print("  Free models allow 20 requests a minute, and 50 a day per account unless the account has")
-        print("  bought $10 or more of credits (then 1,000). Failed requests count.")
+        daily = info.get("free_model_daily_requests")
+        if isinstance(daily, dict):
+            print(f"  free-model requests today (UTC): {daily.get('used')} used of {daily.get('limit')}, "
+                  f"{daily.get('remaining')} left")
+        print("  Free models allow 20 requests a minute, and 50 a day unless $10 or more of credits have")
+        print("  ever been bought (then 1,000). More keys or accounts do not raise these limits.")
         models = _get("https://openrouter.ai/api/v1/models", key)["data"]
         by_id = {m["id"]: m for m in models}
-        vision = free_vision_models(models)
+        vision = llm.free_vision_models(models)
         print(f"\nFree models that accept images ({len(vision)}): " + ", ".join(vision[:8]))
         chosen = config.model_name() or llm.pick_openrouter_model()
         m = by_id.get(chosen)

@@ -34,7 +34,7 @@ PARTICIPANT = setting("PARTICIPANT", "P00")
 
 # Language model: LLM_PROVIDER=anthropic (ANTHROPIC_API_KEY) or openrouter (OPENROUTER_API_KEY)
 LLM_PROVIDER = setting("LLM_PROVIDER", "anthropic").lower()
-ANTHROPIC_MODEL = setting("ANTHROPIC_MODEL", "claude-sonnet-4-6")
+ANTHROPIC_MODEL = setting("ANTHROPIC_MODEL", "claude-sonnet-5-5")
 # Leave OPENROUTER_MODEL empty to pick a free model that accepts images automatically.
 # Free models change often; `lab check` lists the current ones.
 OPENROUTER_MODEL = setting("OPENROUTER_MODEL", "")

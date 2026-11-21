@@ -83,9 +83,9 @@ pipeline. `lab <command> --help` lists every option. `python -m labkit` works in
 
 Part 1 spends model calls only on figure captions, which are cached in `.cache/` after the first
 run. A full copilot dev run makes 24 calls and the test run 26, so use `--ids` and
-`--retrieval-only` while developing. On OpenRouter's free models an account gets 50 requests a day
-(1,000 once it has bought $10 of credits), failed requests count, and the kit paces calls to 20 a
-minute.
+`--retrieval-only` while developing. On OpenRouter's free models you get 50 requests a day
+(1,000 once $10 of credits have ever been bought) and 20 a minute; the kit paces calls to stay
+under 20 a minute. `lab check` shows how many free requests you have left today.
 
 ## Repository layout
 
