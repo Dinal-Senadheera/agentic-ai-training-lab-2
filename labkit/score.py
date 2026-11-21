@@ -2,7 +2,7 @@
 
 Participants use these through the `lab` command (lab manuals, lab copilot, lab rescore):
   score.manuals(rows)                    Part 1 and 2: by answer type, unit and page level
-  score.copilot(rows)                    Parts 3 and 4: by category, with 1B and 1C subtotals
+  score.copilot(rows)                    Parts 3 and 4: by category, with Part 3 and Part 4 subtotals
   pass compare=baseline_rows to see before and after; verbose=True for a reason per question
 
 Facilitators, from the repo folder:
@@ -33,8 +33,8 @@ TYPES = ["figure", "table", "text", "none"]
 CATEGORIES = ["plain", "identifier", "table", "image", "multihop", "aggregation",
               "version", "conflict", "tenant", "unanswerable", "injection"]
 GROUPS = {"controls": ["plain", "identifier", "table", "image"],
-          "1B many sources": ["multihop", "aggregation"],
-          "1C trust": ["version", "conflict", "tenant", "unanswerable", "injection"]}
+          "Part 3 sources": ["multihop", "aggregation"],
+          "Part 4 trust": ["version", "conflict", "tenant", "unanswerable", "injection"]}
 _UNITS = None
 
 

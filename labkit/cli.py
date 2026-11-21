@@ -45,8 +45,13 @@ def rel(path):
 
 
 def save_run(rows, part, pipeline, split):
+    """Save a run, keeping earlier results for questions this run did not include."""
     config.RUNS.mkdir(exist_ok=True)
     path = config.RUNS / f"{pipeline}_{part}_{split}.jsonl"
+    if path.exists():
+        new = {r["id"] for r in rows}
+        rows = [r for r in score.load(path) if r["id"] not in new] + list(rows)
+        rows.sort(key=lambda r: r["id"])
     path.write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows), encoding="utf-8")
     return path
 
@@ -81,15 +86,26 @@ def cmd_part(args):
     else:
         rows = copilot.run(pipe, "dev", ids=args.ids, retrieval_only=args.retrieval_only,
                            quiet=not args.answers)
-    path = save_run(rows, part, args.pipeline.replace(":", "."), "dev")
+    retrieval_only = getattr(args, "retrieval_only", False)
+    name = args.pipeline.replace(":", ".") + ("-retrieval" if retrieval_only else "")
+    path = save_run(rows, part, name, "dev")
     print(f"Run saved to {rel(path)}")
     compare = None
-    if args.pipeline != "baseline" and not args.no_compare:
+    if args.pipeline != "baseline" and not args.no_compare and not retrieval_only:
         compare = saved_run(part, "baseline")
         if compare is None:
-            print("(No saved baseline run to compare with. Run `lab", part, "--pipeline baseline` once.)")
+            print(f"(No saved baseline run to compare with. Run `lab {part} --pipeline baseline` once.)")
+        else:
+            missing = sorted({r["id"] for r in rows} - {r["id"] for r in compare})
+            if missing:
+                print(f"(Not compared: the saved baseline has no result for {' '.join(missing)}. "
+                      f"Run `lab {part} --pipeline baseline --ids {' '.join(missing)}` first.)")
+                compare = None
     scorer = score.manuals if part == "manuals" else score.copilot
     scorer(rows, compare=compare, verbose=not args.brief, label=pipe.name)
+    if retrieval_only:
+        print("Retrieval only: no answers were generated, so answer scores are 0 and the gate fails by design.\n"
+              "Read the Retrieval line above.")
     calls_note(before)
 
 
@@ -126,8 +142,8 @@ def cmd_rescore(args):
 
 def cmd_submit(args):
     participant = args.participant or config.PARTICIPANT
-    if not participant.isalnum():
-        raise SystemExit("Set PARTICIPANT in .env (or pass --participant) to your ID: letters and digits only.")
+    if not participant.isalnum() or participant == "P00":
+        raise SystemExit("Set PARTICIPANT in .env (or pass --participant) to your own ID: letters and digits only.")
     out = config.SUBMISSIONS / f"{participant}_{args.part}_test.jsonl"
     if out.exists() and not args.force:
         raise SystemExit(f"{out.name} already exists. Each test split is run once; use --force to replace it.")

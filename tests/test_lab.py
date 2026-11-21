@@ -1,7 +1,7 @@
 """Smoke tests: every command runs end to end offline. Run with `pytest`."""
 import pytest
 
-from labkit import cli, config, copilot, llm, manuals
+from labkit import cli, config, copilot, llm, manuals, score
 
 
 def lab(*argv):
@@ -73,3 +73,37 @@ def test_submit_once(monkeypatch):
     with pytest.raises(SystemExit):
         lab("submit", "manuals")
     lab("submit", "manuals", "--force")
+
+
+def test_vectorstore_filters():
+    pytest.importorskip("chromadb")
+    from labkit.vectorstore import ChromaStore
+    chunks = copilot.CopilotBaseline().chunk(copilot.load_documents())
+    store = ChromaStore(chunks)
+    assert len(store.search("refund window", k=5)) == 5
+    hits = store.search("refund window", k=5, where={"type": "policy"})
+    assert hits and all(c.meta["type"] == "policy" for c, _ in hits)
+    hits = store.search("printer", k=10, where={"type": {"$in": ["manual", "ticket"]}})
+    assert hits and all(c.meta["type"] in ("manual", "ticket") for c, _ in hits)
+
+
+def test_retrieval_only_does_not_replace_baseline(capsys):
+    lab("copilot", "--pipeline", "baseline", "--ids", "D03", "--brief")
+    lab("copilot", "--pipeline", "baseline", "--retrieval-only", "--brief")
+    saved = {r["id"]: r for r in score.load(config.RUNS / "baseline_copilot_dev.jsonl")}
+    assert set(saved) == {"D03"} and saved["D03"]["answer"] == "mock"
+    assert "by design" in capsys.readouterr().out
+
+
+def test_runs_accumulate_and_partial_baseline_is_not_compared(capsys):
+    lab("copilot", "--pipeline", "baseline", "--ids", "D03", "--brief")
+    lab("copilot", "--pipeline", "baseline", "--ids", "D09", "--brief")
+    assert {r["id"] for r in score.load(config.RUNS / "baseline_copilot_dev.jsonl")} == {"D03", "D09"}
+    lab("copilot", "--ids", "D03", "D16", "--brief")
+    assert "Not compared" in capsys.readouterr().out
+
+
+def test_submit_needs_own_id(monkeypatch):
+    monkeypatch.setattr(config, "PARTICIPANT", "P00")
+    with pytest.raises(SystemExit):
+        lab("submit", "manuals")

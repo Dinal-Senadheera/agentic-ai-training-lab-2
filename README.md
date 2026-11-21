@@ -26,8 +26,8 @@ language model. Use one of:
 - **OpenRouter:** an `OPENROUTER_API_KEY` from openrouter.ai. Free models work, with daily limits
   (see Model budget below).
 
-Your facilitator will tell you which to use. The embedding model, all-MiniLM-L6-v2 (the one from the primitives lab), runs on your laptop and
-needs no key.
+Your facilitator will tell you which to use. The embedding model, all-MiniLM-L6-v2 (the one from
+the primitives lab), runs on your laptop and needs no key.
 
 ## Setup
 
@@ -40,8 +40,8 @@ pip install -r requirements.txt
 copy .env.example .env            (Windows)   or   cp .env.example .env
 ```
 
-Open `.env` and set `PARTICIPANT` to your ID (letters and digits only), `LLM_PROVIDER` (`anthropic` or `openrouter`) and the
-matching key. Then run:
+Open `.env` and set `PARTICIPANT` to your ID (letters and digits only), `LLM_PROVIDER` (`anthropic`
+or `openrouter`) and the matching key. Then run:
 
 ```
 lab check
@@ -49,8 +49,7 @@ lab check
 
 It shows your key's limits and the model in use, and makes one text call and one image call. If it
 says there is no API key, or the call fails, fix that before the session: nothing else in the lab
-works without it. The first run of anything that embeds downloads the
-embedding model once.
+works without it. The first run of anything that embeds downloads the embedding model once.
 
 ## How you work
 
@@ -93,11 +92,11 @@ minute.
 | Path | What it is |
 | --- | --- |
 | `mylab/` | Your pipelines |
-| `labkit/` | Shared code: settings, model calls, embeddings, the baselines, explain tools, scorers, the `lab` command |
+| `labkit/` | Shared code: settings, model calls, embeddings, the baselines, explain tools, scorers, the `lab` command, and an optional Chroma vector store (`vectorstore.py`) |
 | `data/manuals/` | Parts 1 and 2: two hardware manuals parsed into units, figures, a loose photo, questions |
 | `data/copilot/` | Parts 3 and 4: the support knowledge base and its questions |
 | `docs/` | The lab guide for each part, and the decision record template |
-| `runs/` | Saved dev runs, used for comparisons and rescoring |
+| `runs/` | Saved dev runs, used for comparisons and rescoring. A run on some questions updates only those |
 | `submissions/` | Your test submissions |
 | `tests/` | For the lab's maintainers: checks that the code runs, using canned answers in place of the model. These tests say nothing about how well a pipeline answers, and are not a way to do the lab without a key |
 

@@ -60,6 +60,14 @@ Each chunk carries `chunk.meta`: `type`, `product_version`, `updated`, `tenant` 
 question carries `question["tenant"]`, a merchant ID or `None`. The controls (plain, identifier,
 table, image) should not drop; if they do, your fix broke something.
 
+### Optional: a vector database
+
+`labkit/vectorstore.py` puts the chunks in Chroma, an in-memory vector database that can filter on
+each chunk's metadata during the search (`store.search(text, k, where={...})`). The file shows the
+filter syntax. Use it to answer the merchant question above by experiment: filter inside the search,
+then filter the top results afterwards, and compare what each returns for D19 and D20. Done when no
+question can retrieve another merchant's contract, and you can say which placement guarantees that.
+
 ## Build
 
 Edit `MyCopilot` in `mylab/copilot.py`, then:

@@ -19,7 +19,8 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest"]
+vectordb = ["chromadb>=1.0"]
+dev = ["pytest", "chromadb>=1.0"]
 
 [project.scripts]
 lab = "labkit.cli:main"
