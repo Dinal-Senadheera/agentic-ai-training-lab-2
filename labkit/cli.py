@@ -133,6 +133,9 @@ def cmd_compare(args):
 
 
 def cmd_rescore(args):
+    for f in (args.run, args.compare):
+        if f and not __import__("os").path.exists(f):
+            raise SystemExit(f"No saved run at {f}. Saved runs are in runs/.")
     rows = score.load(args.run)
     part = "manuals" if rows and "answer_type" in rows[0] else "copilot"
     compare = score.load(args.compare) if args.compare else None

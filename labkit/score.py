@@ -1,13 +1,9 @@
-"""Scorecards for both parts of the lab, and the facilitators' leaderboard.
+"""Scorecards for both parts of the lab.
 
-Participants use these through the `lab` command (lab manuals, lab copilot, lab rescore):
+Used by the `lab` command (lab manuals, lab copilot, lab rescore):
   score.manuals(rows)                    Part 1 and 2: by answer type, unit and page level
   score.copilot(rows)                    Parts 3 and 4: by category, with Part 3 and Part 4 subtotals
   pass compare=baseline_rows to see before and after; verbose=True for a reason per question
-
-Facilitators, from the repo folder:
-  python -m labkit.score manuals <manuals_test_gold.jsonl> submissions/
-  python -m labkit.score copilot <copilot_test_gold.jsonl> submissions/
 
 Part 1 and 2 rules: 1.0 when the answer type matches, the unit is the gold unit and the citation
 names its real document and page; 1.0 for abstaining when the manuals cannot answer. Wrong
@@ -21,7 +17,6 @@ Ship gate: 0.80 with zero leaks.
 """
 import json
 import re
-import sys
 from collections import defaultdict
 from pathlib import Path
 
@@ -209,28 +204,6 @@ def _c_print_report(path, results, retr, cost, compare=None):
     print(f"Ship gate (score >= {SHIP_SCORE:.2f} and 0 leaks): {'PASS' if gate else 'FAIL'}")
 
 
-def _c_leaderboard(folder: Path, gold_rows):
-    rows = []
-    for f in sorted(folder.glob("*_copilot_test.jsonl")):
-        res, retr, cost = _c_evaluate(gold_rows, load(f))
-        overall, leaks, cats, _ = _c_summary(res, retr)
-        participant = f.stem.replace("_copilot_test", "")
-        pipeline = (load(f) or [{}])[0].get("pipeline", "")
-        rows.append((overall, participant, pipeline, leaks, cats, cost))
-    rows.sort(key=lambda r: (r[3] > 0, -r[0]))
-    cats_present = [c for c in CATEGORIES if any(c in r[4] for r in rows)]
-    print(f"{'participant':<12}{'pipeline':<18}{'overall':>8}{'leaks':>6}{'gate':>6}  " +
-          " ".join(f"{c[:6]:>6}" for c in cats_present) + f"{'tokens':>9}")
-    for overall, participant, pipeline, leaks, cats, cost in rows:
-        gate = "PASS" if overall >= SHIP_SCORE and leaks == 0 else "FAIL"
-        tokens = cost.get("input_tokens", 0) + cost.get("output_tokens", 0)
-        print(f"{participant:<12}{pipeline[:17]:<18}{overall:>8.2f}{leaks:>6}{gate:>6}  " +
-              " ".join(f"{cats[c][0]:>6.2f}" if c in cats else f"{'-':>6}" for c in cats_present) +
-              f"{tokens:>9.0f}")
-
-
-
-
 def _m_score_one(gold, sub):
     r = {"id": gold["id"], "type": gold["answer_type"], "score": 0.0, "wrong_artefact": False,
          "unsourced": False, "why": ""}
@@ -318,24 +291,6 @@ def _m_report(path, results, retr, compare=None):
     print(f"Ship gate (score >= {SHIP_SCORE:.2f} and 0 unsourced): {'PASS' if gate else 'FAIL'}")
 
 
-def _m_leaderboard(folder, gold_rows):
-    rows = []
-    for f in sorted(Path(folder).glob("*_manuals_test.jsonl")):
-        subs = load(f)
-        overall, by, _, unsourced, wrong = _m_summary(*_m_evaluate(gold_rows, subs))
-        rows.append((overall, f.stem.replace("_manuals_test", ""), subs[0].get("pipeline", "") if subs else "",
-                     unsourced, wrong, by))
-    rows.sort(key=lambda r: (r[3] > 0, -r[0]))
-    print(f"{'participant':<12}{'pipeline':<18}{'overall':>8}{'unsourced':>10}{'wrong':>7}{'gate':>6}  " +
-          " ".join(f"{t:>7}" for t in TYPES))
-    for overall, participant, pipe, uns, wrong, by in rows:
-        gate = "PASS" if overall >= SHIP_SCORE and uns == 0 else "FAIL"
-        print(f"{participant:<12}{pipe[:17]:<18}{overall:>8.2f}{uns:>10}{wrong:>7}{gate:>6}  " +
-              " ".join(f"{sum(by[t]) / len(by[t]):>7.2f}" if t in by else f"{'-':>7}" for t in TYPES))
-
-
-
-
 # ------------------------------------------------------------------------------ public API
 def manuals(rows, gold=None, compare=None, verbose=False, label="your pipeline"):
     gold_rows = load(gold or config.MANUALS / "dev_questions.jsonl")
@@ -366,14 +321,3 @@ def copilot(rows, gold=None, compare=None, verbose=False, label="your pipeline")
         print("\nPer question")
         for r in results:
             print(f"{r['id']:<5}{r['category']:<14}{r['score']:.1f}  {'; '.join(r['why'])}")
-
-
-if __name__ == "__main__":
-    if len(sys.argv) != 4 or sys.argv[1] not in ("manuals", "copilot"):
-        raise SystemExit("usage: python -m labkit.score manuals|copilot <test_gold.jsonl> <submissions folder>")
-    part, gold, folder = sys.argv[1:]
-    gold_rows = load(gold)
-    if part == "manuals":
-        _m_leaderboard(folder, gold_rows)
-    else:
-        _c_leaderboard(Path(folder), gold_rows)

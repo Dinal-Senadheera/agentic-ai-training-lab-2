@@ -95,10 +95,9 @@ under 20 a minute. `lab check` shows how many free requests you have left today.
 | `labkit/` | Shared code: settings, model calls, embeddings, the baselines, explain tools, scorers, the `lab` command, and an optional Chroma vector store (`vectorstore.py`) |
 | `data/manuals/` | Parts 1 and 2: two hardware manuals parsed into units, figures, a loose photo, questions |
 | `data/copilot/` | Parts 3 and 4: the support knowledge base and its questions |
-| `docs/` | The lab guide for each part, and the decision record template |
+| `docs/` | The lab guide for each part, and the template for your Part 4 decision record |
 | `runs/` | Saved dev runs, used for comparisons and rescoring. A run on some questions updates only those |
 | `submissions/` | Your test submissions |
-| `tests/` | For the lab's maintainers: checks that the code runs, using canned answers in place of the model. These tests say nothing about how well a pipeline answers, and are not a way to do the lab without a key |
 
 ## Fair play
 

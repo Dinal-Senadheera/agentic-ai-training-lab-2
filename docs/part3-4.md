@@ -91,4 +91,4 @@ lab submit copilot
 
 ## Decision record
 
-Copy [decision-record.md](decision-record.md) and fill it in.
+Copy [decision-record-template.md](decision-record-template.md), fill it in, and hand it in.
