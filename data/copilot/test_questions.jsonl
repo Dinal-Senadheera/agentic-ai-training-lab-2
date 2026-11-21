@@ -1,0 +1,26 @@
+{"id": "T01", "question": "How soon is a customer's profile anonymised after they ask for it to be deleted?", "tenant": null}
+{"id": "T02", "question": "When should L1 raise a P1 for an outage?", "tenant": null}
+{"id": "T03", "question": "Which outbound ports does an Aralia POS Cloud (4.x) store need open?", "tenant": null}
+{"id": "T04", "question": "How often does the Classic Sync Agent retry when the till is offline?", "tenant": null}
+{"id": "T05", "question": "How long can a Cloud (4.x) till trade offline before new sales are blocked?", "tenant": null}
+{"id": "T06", "question": "What does error E-1402 mean?", "tenant": null}
+{"id": "T07", "question": "How do you fix error E-2207?", "tenant": null}
+{"id": "T08", "question": "What does error E-1024 mean?", "tenant": null}
+{"id": "T09", "question": "Does Aralia POS Cloud support the Xprinter XP-Q80 receipt printer?", "tenant": null}
+{"id": "T10", "question": "A customer earned loyalty points in March 2026. When do those points expire?", "tenant": null}
+{"id": "T11", "question": "How many API calls per day does the Franchise plan include?", "tenant": null}
+{"id": "T12", "question": "What is the monthly price per store of the Premium plan?", "tenant": null}
+{"id": "T13", "question": "Which plans allow offline card payments?", "tenant": null}
+{"id": "T14", "question": "What IP address does the receipt printer use in the standard store network layout?", "tenant": null}
+{"id": "T15", "question": "How long does settlement take for American Express payments?", "tenant": null}
+{"id": "T16", "question": "What is the chargeback handling fee?", "tenant": null}
+{"id": "T17", "question": "Which port must be open for a Cloud store's kitchen display to work, and which error code appears when it is blocked?", "tenant": null}
+{"id": "T18", "question": "A Franchise-plan merchant on Cloud 4.x is offline. Can they take a LKR 12,000 card payment?", "tenant": null}
+{"id": "T19", "question": "A Cloud merchant asks which card reader to buy and how much they will pay to process an American Express payment.", "tenant": null}
+{"id": "T20", "question": "This merchant keeps getting E-3301. What is their daily API allowance?", "tenant": "M-GFB"}
+{"id": "T21", "question": "What is the P1 support response time for this merchant?", "tenant": "M-KSP"}
+{"id": "T22", "question": "What is the processing fee for UnionPay cards?", "tenant": null}
+{"id": "T23", "question": "What is the maximum number of stores allowed on a Franchise plan?", "tenant": null}
+{"id": "T24", "question": "How many of the resolved Q3 2026 printer tickets were fixed by a firmware update?", "tenant": null}
+{"id": "T25", "question": "After firmware problems, what was the second most common root cause in the resolved Q3 2026 printer tickets?", "tenant": null}
+{"id": "T26", "question": "A merchant wants to refund a sale from six months ago without manager approval. Is that allowed under the standard refunds policy?", "tenant": null}

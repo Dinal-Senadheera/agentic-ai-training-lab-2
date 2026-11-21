@@ -1,0 +1,2 @@
+Standard store network layout (Aralia POS Cloud). ISP router 192.168.20.1 (gateway). Managed switch VLAN 20 and VLAN 30. VLAN 20: POS devices. Till 01 DHCP. Receipt printer 192.168.20.50. KDS screen 192.168.20.60. Card reader R2 DHCP. VLAN 30: Guest Wi-Fi. Guest access point Isolated from VLAN 20. Outbound only: 443 and 8883.
+A network diagram showing the router, switch, POS VLAN 20 devices with fixed IPs and an isolated guest VLAN 30.

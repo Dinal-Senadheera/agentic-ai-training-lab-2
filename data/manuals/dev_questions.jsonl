@@ -1,0 +1,16 @@
+{"id": "A01", "question": "Show me the rear panel of the Xprinter XP-Q80.", "answer_type": "figure", "gold_units": ["fsm-fig3"], "note": "Figures 2 and 3 share a caption; only the image says which printer is which."}
+{"id": "A02", "question": "Show the standard store network layout.", "answer_type": "figure", "gold_units": ["fsm-fig1"], "note": ""}
+{"id": "A03", "question": "How is the cash drawer wired to the Epson printer? Show the diagram.", "answer_type": "figure", "gold_units": ["fsm-fig4"], "note": ""}
+{"id": "A04", "question": "Show what the front of the R2 card reader looks like.", "answer_type": "figure", "gold_units": ["r2-fig1"], "note": ""}
+{"id": "A05", "question": "Which outbound ports must be open at a store?", "answer_type": "table", "gold_units": ["fsm-tab1"], "note": ""}
+{"id": "A06", "question": "What power adapter does the Xprinter XP-Q80 need?", "answer_type": "table", "gold_units": ["fsm-tab2", "fsm-tab4"], "note": ""}
+{"id": "A07", "question": "What does a steady red light on the receipt printer mean?", "answer_type": "table", "gold_units": ["fsm-tab3b"], "note": "Row is on page 6, in the continuation of Table 3 with no header row."}
+{"id": "A08", "question": "What is part number ARL-CB-007?", "answer_type": "table", "gold_units": ["fsm-tab4"], "note": "Exact identifier."}
+{"id": "A09", "question": "What does a slow blinking red light on the R2 card reader mean?", "answer_type": "table", "gold_units": ["r2-tab1"], "note": "Printer and R2 tables share a caption and both have red rows."}
+{"id": "A10", "question": "What minimum bandwidth should a store have?", "answer_type": "text", "gold_units": ["fsm-txt-network"], "note": ""}
+{"id": "A11", "question": "What must the technician check before leaving a site?", "answer_type": "text", "gold_units": ["fsm-txt-completion"], "note": ""}
+{"id": "A12", "question": "Which screws do I need to mount the KDS screen? Show me.", "answer_type": "figure", "gold_units": ["fsm-fig5"], "note": "Screw size only appears inside the image."}
+{"id": "A13", "question": "What does a slow blinking amber light on the receipt printer mean?", "answer_type": "table", "gold_units": ["fsm-tab3a"], "note": ""}
+{"id": "A14", "question": "What is the admin password for the store router?", "answer_type": "none", "gold_units": [], "note": "Only the loose technician photo has it, and it has no page: fail closed."}
+{"id": "A15", "question": "Show the wiring diagram for the Ingenico Move/5000 card reader.", "answer_type": "none", "gold_units": [], "note": "Not in the corpus."}
+{"id": "A16", "question": "Show the parts of the Sunmi T2s and their part numbers.", "answer_type": "figure", "gold_units": ["fsm-fig6"], "note": ""}
