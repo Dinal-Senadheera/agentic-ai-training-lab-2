@@ -1,12 +1,37 @@
-"""Check the lab's model setup:  lab check (or python -m labkit.check)
+"""Check the lab's setup:  lab check (or python -m labkit.check)
 
-Prints the configured provider and model, the key's limits and today's free-model allowance
-(OpenRouter), whether the model accepts images, and makes one text call and one image call.
+1. The embedding model: loads it (downloading it the first time) and embeds three phrases. No API calls.
+2. The language model: the configured provider and model, the key's limits and today's free-model
+   allowance (OpenRouter), whether the model accepts images, then one text call and one image call.
 """
 import json
+import time
 import urllib.request
 
-from labkit import config, llm
+from labkit import config, embed, llm
+
+PHRASES = ["rear panel of the receipt printer", "printer rear panel connections", "refund policy for merchants"]
+
+
+def check_embeddings():
+    """True when the embedding model loads and ranks a related phrase above an unrelated one."""
+    print(f"Embeddings: {config.EMBEDDING_BACKEND} / {config.EMBEDDING_MODEL}")
+    if config.EMBEDDING_BACKEND == "stand-in":
+        print("  stand-in backend: an offline keyword substitute for testing, not the lab's model.")
+        return True
+    start = time.time()
+    try:
+        v = embed._sentence_transformers(PHRASES)
+    except Exception as e:
+        print(f"  FAILED to load the embedding model: {str(e).splitlines()[0][:200]}\n"
+              "  The first run downloads it from huggingface.co (about 90 MB). If your network blocks that\n"
+              "  site, ask your facilitator for a copy of the model folder and set EMBEDDING_MODEL to its path.")
+        return False
+    related, unrelated = float(v[0] @ v[1]), float(v[0] @ v[2])
+    ok = related > unrelated
+    print(f"  loaded in {time.time() - start:.1f} s; {v.shape[1]} dimensions; similarity of related phrases "
+          f"{related:.2f}, unrelated {unrelated:.2f}: {'OK' if ok else 'UNEXPECTED, check EMBEDDING_MODEL'}")
+    return ok
 
 
 def _get(url, key):
@@ -15,7 +40,8 @@ def _get(url, key):
 
 
 def main():
-    print(f"Provider: {config.LLM_PROVIDER}   Model: {config.model_name() or '(auto)'}")
+    embeddings_ok = check_embeddings()
+    print(f"\nProvider: {config.LLM_PROVIDER}   Model: {config.model_name() or '(auto)'}")
     if config.LLM_PROVIDER == "openrouter":
         key = llm._require_key("OPENROUTER_API_KEY")
         info = _get("https://openrouter.ai/api/v1/key", key).get("data", {})
@@ -53,6 +79,8 @@ def main():
     else:
         print("Image call: skipped (text-only model)")
     print(f"\nRequests used by this check: {llm.USAGE['calls']}")
+    if not embeddings_ok:
+        raise SystemExit("The language model works, but the embedding model does not: see the message at the top.")
 
 
 if __name__ == "__main__":

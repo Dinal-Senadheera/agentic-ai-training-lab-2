@@ -51,9 +51,10 @@ or `openrouter`) and the matching key. Then run:
 lab check
 ```
 
-It shows your key's limits and the model in use, and makes one text call and one image call. If it
-says there is no API key, or the call fails, fix that before the session: nothing else in the lab
-works without it. The first run of anything that embeds downloads the embedding model once.
+It checks both models. First the embedding model: it downloads it the first time (about 90 MB from
+huggingface.co) and checks that it works. Then the language model: it shows your key's limits and
+the model in use, and makes one text call and one image call. If anything fails, fix it before the
+session: nothing else in the lab works without both.
 
 ## How you work
 
