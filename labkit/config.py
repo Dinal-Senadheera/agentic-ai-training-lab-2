@@ -41,7 +41,8 @@ OPENROUTER_MODEL = setting("OPENROUTER_MODEL", "")
 
 # Local embedding model. EMBEDDING_BACKEND=stand-in is an offline lexical stand-in, for testing only.
 EMBEDDING_BACKEND = setting("EMBEDDING_BACKEND", "sentence-transformers")
-EMBEDDING_MODEL = setting("EMBEDDING_MODEL", "BAAI/bge-small-en-v1.5")
+# The same model as the primitives lab. It reads at most 256 tokens of each text.
+EMBEDDING_MODEL = setting("EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2")
 QUERY_PREFIX = setting("QUERY_PREFIX", "")
 
 

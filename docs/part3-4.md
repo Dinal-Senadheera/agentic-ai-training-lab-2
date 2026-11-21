@@ -54,6 +54,8 @@ build:
   it? What does a sufficient-context check do instead?
 - How do provenance tags and an instruction hierarchy stop instructions hidden in a ticket?
 
+If you make chunks larger, remember the embedding model reads only the first 256 tokens of each.
+
 Each chunk carries `chunk.meta`: `type`, `product_version`, `updated`, `tenant` and `title`. Each
 question carries `question["tenant"]`, a merchant ID or `None`. The controls (plain, identifier,
 table, image) should not drop; if they do, your fix broke something.

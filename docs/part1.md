@@ -51,7 +51,10 @@ saved baseline run. Score after every story so each gain is attributable, and us
 | **E. Answer with the artefact.** Decide whether the question wants a figure, a table or text, and return that unit with its citation. | `answer` | Figure and table questions return the real artefact and its page. |
 | **F. Fail closed.** Abstain, with a `reason`, when no sourced unit covers the question. | `answer` | Both unanswerable dev questions abstain, and no answerable one does. |
 
-Useful facts: `unit["bbox"]` is `[x0, y0, x1, y1]` in points; `unit["page"] is None` means no
+Useful facts: search uses all-MiniLM-L6-v2, the embedding model from the primitives lab. It reads
+only the first 256 tokens of a text, so a long caption is cut off: put what identifies the figure
+first. Scores are cosine similarity (higher is closer); with normalised vectors this ranks the same
+as L2 distance. `unit["bbox"]` is `[x0, y0, x1, y1]` in points; `unit["page"] is None` means no
 provenance; `hits` is a list of `(unit, score)`. Captioning is the only step that costs model calls,
 so caption only what needs it.
 

@@ -26,7 +26,8 @@ language model. Use one of:
 - **OpenRouter:** an `OPENROUTER_API_KEY` from openrouter.ai. Free models work, with daily limits
   (see Model budget below).
 
-Your facilitator will tell you which to use. The embedding model runs on your laptop and needs no key.
+Your facilitator will tell you which to use. The embedding model, all-MiniLM-L6-v2 (the one from the primitives lab), runs on your laptop and
+needs no key.
 
 ## Setup
 
