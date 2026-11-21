@@ -17,6 +17,17 @@ Systems, which sells point-of-sale systems to shops and restaurants in Sri Lanka
 Every part has dev questions with answers, so you can score yourself as often as you like, and test
 questions that facilitators score. Each scorecard ends with a ship gate.
 
+## API key
+
+**You need an API key to do this lab.** Every figure caption and every copilot answer is a call to a
+language model. Use one of:
+
+- **Anthropic:** an `ANTHROPIC_API_KEY` from console.anthropic.com (paid, low cost for this lab).
+- **OpenRouter:** an `OPENROUTER_API_KEY` from openrouter.ai. Free models work, with daily limits
+  (see Model budget below).
+
+Your facilitator will tell you which to use. The embedding model runs on your laptop and needs no key.
+
 ## Setup
 
 ```
@@ -35,8 +46,9 @@ matching key. Then run:
 lab check
 ```
 
-It shows your key's limits and the model in use, and makes one text call and one image call. Fix
-anything it reports before the session. The first run of anything that embeds downloads the
+It shows your key's limits and the model in use, and makes one text call and one image call. If it
+says there is no API key, or the call fails, fix that before the session: nothing else in the lab
+works without it. The first run of anything that embeds downloads the
 embedding model once.
 
 ## How you work
@@ -86,7 +98,7 @@ minute.
 | `docs/` | The lab guide for each part, and the decision record template |
 | `runs/` | Saved dev runs, used for comparisons and rescoring |
 | `submissions/` | Your test submissions |
-| `tests/` | Offline tests: `pytest` runs them with a fake model and no network |
+| `tests/` | For the lab's maintainers: checks that the code runs, using canned answers in place of the model. These tests say nothing about how well a pipeline answers, and are not a way to do the lab without a key |
 
 ## Fair play
 

@@ -22,9 +22,7 @@ def free_vision_models(models):
 def main():
     print(f"Provider: {config.LLM_PROVIDER}   Model: {config.model_name() or '(auto)'}")
     if config.LLM_PROVIDER == "openrouter":
-        key = config.setting("OPENROUTER_API_KEY")
-        if not key:
-            raise SystemExit("Set OPENROUTER_API_KEY in .env.")
+        key = llm._require_key("OPENROUTER_API_KEY")
         info = _get("https://openrouter.ai/api/v1/key", key).get("data", {})
         print("\nKey:")
         for k in ("label", "is_free_tier", "limit", "limit_remaining", "usage", "usage_daily"):

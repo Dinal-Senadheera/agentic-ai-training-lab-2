@@ -36,20 +36,25 @@ def pick_openrouter_model():
     return vision[0]
 
 
+def _require_key(name):
+    """The API key, or a clear stop. The lab needs a key for every model call."""
+    key = config.setting(name).strip()
+    if not key or "your-key" in key:
+        raise SystemExit(
+            f"No API key: set {name} in .env. This lab needs an Anthropic or OpenRouter API key for every "
+            "model call (figure captions and copilot answers). See 'API key' in the README.")
+    return key
+
+
 def _get_client():
     global _client
     if _client is None:
         if config.LLM_PROVIDER == "anthropic":
             import anthropic
-            key = config.setting("ANTHROPIC_API_KEY")
-            if not key:
-                raise RuntimeError("Set ANTHROPIC_API_KEY in .env, or switch LLM_PROVIDER to openrouter.")
-            _client = anthropic.Anthropic(api_key=key)
+            _client = anthropic.Anthropic(api_key=_require_key("ANTHROPIC_API_KEY"))
         elif config.LLM_PROVIDER == "openrouter":
             from openai import OpenAI
-            key = config.setting("OPENROUTER_API_KEY")
-            if not key:
-                raise RuntimeError("Set OPENROUTER_API_KEY in .env, or switch LLM_PROVIDER to anthropic.")
+            key = _require_key("OPENROUTER_API_KEY")
             _client = OpenAI(api_key=key, base_url="https://openrouter.ai/api/v1")
         else:
             raise RuntimeError(f"Unknown LLM_PROVIDER {config.LLM_PROVIDER!r}: use anthropic or openrouter.")
