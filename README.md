@@ -31,11 +31,15 @@ the primitives lab), runs on your laptop and needs no key.
 
 ## Setup
 
+You need Python 3.10 or newer and Git.
+
 ```
 git clone https://github.com/Dinal-Senadheera/agentic-ai-training-lab-2.git
 cd agentic-ai-training-lab-2
 python -m venv .venv
-.venv\Scripts\activate            (Windows)   or   source .venv/bin/activate
+.venv\Scripts\activate            (Windows Command Prompt)
+.venv\Scripts\Activate.ps1        (Windows PowerShell)
+source .venv/bin/activate          (macOS, Linux)
 pip install -r requirements.txt
 copy .env.example .env            (Windows)   or   cp .env.example .env
 ```

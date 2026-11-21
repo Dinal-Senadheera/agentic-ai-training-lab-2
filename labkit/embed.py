@@ -68,13 +68,13 @@ def embed_documents(texts: list[str]) -> np.ndarray:
     if config.EMBEDDING_BACKEND == "stand-in":
         return _stand_in(texts, fit=True)
     path = _cache_path("docs")
-    cache = json.loads(path.read_text()) if path.exists() else {}
+    cache = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
     missing = [t for t in texts if hashlib.sha1(t.encode()).hexdigest() not in cache]
     if missing:
         vecs = _sentence_transformers(missing)
         for t, v in zip(missing, vecs):
             cache[hashlib.sha1(t.encode()).hexdigest()] = v.tolist()
-        path.write_text(json.dumps(cache))
+        path.write_text(json.dumps(cache), encoding="utf-8")
     return np.asarray([cache[hashlib.sha1(t.encode()).hexdigest()] for t in texts], dtype=np.float32)
 
 
